@@ -8,6 +8,8 @@ function App() {
   return (
     <Router>
       <Navbar />
+      <div className="text-red-500 text-2xl">Test Tailwind</div>
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/editor" element={<BlogEditor />} />
