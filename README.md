@@ -1,26 +1,21 @@
-# Personal Blog System
+# Personal Blog Frontend
 
-A simple and scalable personal blog system where users can create, edit, and publish their blogs.
+This is the frontend of the Personal Blog System, built using **React** and **Vite**. The application allows users to create, edit, and view blog posts.
 
 ## Features
-- 📝 Write, edit, and publish blog posts.
-- 💬 Comment on blogs and share them.
-- 🎨 Basic themes for blog personalization.
+- 📝 Create and edit blog posts
+- 📜 View a list of blog posts
+- 🌐 Responsive and modern design
+- ⚡ Built with Vite for fast development
 
 ## Tech Stack
-### Frontend:
-- React.js (for building the user interface)
-- React Router (for navigation)
-- Tailwind CSS (for styling, optional)
+- **React**: Component-based UI library
+- **Vite**: Modern build tool for fast and efficient development
+- **React Router**: For navigation between pages
+- **CSS/Tailwind**: For styling (optional)
 
-### Backend (to be implemented):
-- Node.js (for the server)
-- Express.js (for APIs)
-- PostgreSQL (for data storage)
-
-## Installation
-
+## Installation and Setup
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/personal-blog.git
-   cd personal-blog
+   git clone <repository-url>
+   cd personal-blog-frontend
