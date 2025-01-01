@@ -1,17 +1,12 @@
 import express from "express";
 import Blog from "../models/Blog.js";
+import validateBlog from "../middleware/validateBlog.js";
 
 const router = express.Router();
 
 // create a blog
-router.post("/create", async (req, res) => {
+router.post("/create", validateBlog, async (req, res) => {
   try {
-    const hasAllKeys = ["title", "content"].every((key) => key in req.body);
-    if (hasAllKeys == false) {
-      return res
-        .status(400)
-        .json({ message: "Title and content are required" });
-    }
     const newBlog = new Blog(req.body);
     const savedBlog = await newBlog.save();
     res.status(201).json(savedBlog);
@@ -23,25 +18,30 @@ router.post("/create", async (req, res) => {
 // Get all blogs
 router.get("/", async (req, res) => {
   try {
-    const { search } = req.query;
-    const page = parseInt(req.query.page) || 1; // Default to page 1
-    const limit = parseInt(req.query.limit) || 10; // Default to 10 blogs per page
+    const {
+      search,
+      category,
+      page = 1,
+      limit = 10,
+      sortBy = "createdAt",
+      sortOrder = "desc",
+    } = req.query;
+
+    // Pagination
     const skip = (page - 1) * limit;
 
     // Fuzzy Search
-    const query = search
-      ? {
-          $or: [
-            { title: new RegExp(search, "i") },
-            { content: new RegExp(search, "i") },
-            req.query.category && { category: req.query.category },
-          ],
-        }
-      : {};
-    const sortBy = req.sortBy || "createdAt";
-    const sortOrder = req.query.sortOrder === "asc" ? 1 : -1;
+    const query = {
+      ...(search && {
+        $or: [
+          { title: new RegExp(search, "i") },
+          { content: new RegExp(search, "i") },
+        ],
+      }),
+      ...(category && { category }),
+    };
     const blogs = await Blog.find(query)
-      .sort({ [sortBy]: sortOrder })
+      .sort({ [sortBy]: sortOrder === "asc" ? 1 : -1 })
       .skip(skip)
       .limit(limit);
     const totalBlogs = await Blog.countDocuments(query);

@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import blogRoutes from "./routes/blogRoutes.js";
 import errorHandler from "./middleware/errorHandler.js";
+import cors from "cors";
 
 dotenv.config();
 connectDB();
@@ -11,10 +12,17 @@ const app = express();
 
 // Middleware to parse JSON requests
 app.use(express.json());
-
-app.use("/api/blogs", blogRoutes);
-
 app.use(errorHandler);
+
+// Enable open CORS for all origins and methods
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Allow requests from the frontend
+  })
+);
+
+// blog routes
+app.use("/api/blogs", blogRoutes);
 
 // Simple routes
 app.get("/", (req, res) => {
