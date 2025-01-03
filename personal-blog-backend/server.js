@@ -4,6 +4,8 @@ import connectDB from "./config/db.js";
 import blogRoutes from "./routes/blogRoutes.js";
 import errorHandler from "./middleware/errorHandler.js";
 import cors from "cors";
+import authRoutes from "./routes/authRoutes.js";
+import protectedRoutes from "./routes/protectedRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -22,7 +24,9 @@ app.use(
 );
 
 // blog routes
+app.use("/api/auth", authRoutes);
 app.use("/api/blogs", blogRoutes);
+app.use("/api/protected", protectedRoutes);
 
 // Simple routes
 app.get("/", (req, res) => {
