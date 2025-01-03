@@ -4,18 +4,49 @@ import Home from "./pages/Home";
 import BlogDetails from "./pages/BlogDetails";
 import BlogEditor from "./pages/BlogEditor";
 import Layout from "./components/Layout";
+import { AuthProvider } from "./context/AuthContext";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
+import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
 
 function App() {
   return (
-    <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/blogs/:id" element={<BlogDetails />} />
-          <Route path="/editor" element={<BlogEditor />} />
-        </Routes>
-      </Layout>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Layout>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/blogs/:id"
+              element={
+                <ProtectedRoute>
+                  <BlogDetails />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/editor"
+              element={
+                <ProtectedRoute>
+                  <BlogEditor />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Layout>
+      </Router>
+    </AuthProvider>
   );
 }
 
