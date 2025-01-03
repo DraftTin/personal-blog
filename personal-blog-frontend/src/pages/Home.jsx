@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
+import removeMarkdown from "remove-markdown";
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const limit = 2;
+  const limit = 4;
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -40,12 +42,19 @@ const Home = () => {
     }
   };
 
+  // truncate markdown text
+  function truncateMarkdown(markdown, length) {
+    const plainText = removeMarkdown(markdown);
+    return plainText.length > length
+      ? plainText.slice(0, length) + "..."
+      : plainText;
+  }
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-4xl font-bold mb-6 text-center text-blue-600">
         Blogs
       </h1>
-
       <div className="mb-6 flex justify-center">
         <input
           type="text"
@@ -70,7 +79,10 @@ const Home = () => {
             <h2 className="text-xl font-bold text-blue-700 mb-2">
               <Link to={`/blogs/${blog._id}`}>{blog.title}</Link>
             </h2>
-            <p className="text-gray-700 mb-4">{blog.content.slice(0, 100)}</p>
+            <p className="text-gray-700 mb-4">
+              {truncateMarkdown(blog.content, 20)}{" "}
+              {/* Truncate to 100 characters */}
+            </p>
             <p className="text-sm text-gray-500">Author: {blog.author}</p>
           </li>
         ))}
