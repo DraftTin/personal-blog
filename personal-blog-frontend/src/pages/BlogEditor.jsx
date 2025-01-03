@@ -20,7 +20,7 @@ const BlogEditor = () => {
       setError("Title cannot be empty.");
       return;
     }
-    if (content.trim().length() < 10) {
+    if (!content.trim() || content.trim().length < 10) {
       setError("Content should be at least 10 characters long");
       return;
     }
