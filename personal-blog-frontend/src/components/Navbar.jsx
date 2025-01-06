@@ -17,10 +17,16 @@ const Navbar = ({ user }) => {
         <Link to="/" className="text-white text-2xl font-bold hover:underline">
           Personal Blog
         </Link>
-        <div>
+        <div className="flex items-center">
           {user ? (
             <>
               <span className="text-white mr-4">Welcome, {user.username}</span>
+              <Link
+                to="/editor"
+                className="bg-white text-blue-600 px-4 py-2 rounded hover:bg-gray-200 mr-4"
+              >
+                Create Blog
+              </Link>
               <Link
                 to="/profile"
                 className="bg-white text-blue-600 px-4 py-2 rounded hover:bg-gray-200 mr-4"
