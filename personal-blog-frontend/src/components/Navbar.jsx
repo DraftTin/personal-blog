@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 const Navbar = ({ user }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
+
   const handleLogout = () => {
     logout();
     navigate("/login");
@@ -21,14 +22,14 @@ const Navbar = ({ user }) => {
             <>
               <span className="text-white mr-4">Welcome, {user.username}</span>
               <Link
-                to="/editor"
+                to="/profile"
                 className="bg-white text-blue-600 px-4 py-2 rounded hover:bg-gray-200 mr-4"
               >
-                Create New Blog
+                Profile
               </Link>
               <button
-                className="bg-white text-blue-600 px-4 py-2 rounded hover:bg-gray-200"
                 onClick={handleLogout}
+                className="bg-white text-blue-600 px-4 py-2 rounded hover:bg-gray-200"
               >
                 Logout
               </button>
