@@ -1,14 +1,20 @@
 import express from "express";
 import Blog from "../models/Blog.js";
 import validateBlog from "../middleware/validateBlog.js";
+import protect from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 // create a blog
-router.post("/create", validateBlog, async (req, res) => {
+router.post("/create", protect, validateBlog, async (req, res) => {
+  const { title, content } = req.body;
   try {
-    const newBlog = new Blog(req.body);
-    const savedBlog = await newBlog.save();
+    const blog = new Blog({
+      title,
+      content,
+      author: req.user.id,
+    });
+    const savedBlog = await blog.save();
     res.status(201).json(savedBlog);
   } catch (error) {
     res.status(500).json({ message: "Error creating blog" });
