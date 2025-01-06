@@ -6,6 +6,7 @@ import errorHandler from "./middleware/errorHandler.js";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import protectedRoutes from "./routes/protectedRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -27,6 +28,7 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/protected", protectedRoutes);
+app.use("/api/users", userRoutes);
 
 // Simple routes
 app.get("/", (req, res) => {
@@ -35,7 +37,6 @@ app.get("/", (req, res) => {
 
 app.post("/api/blogs", (req, res) => {
   const newBlog = req.body;
-  console.log(req.body);
   const hasAllKeys = ["title", "content"].every((key) => key in req.body);
   if (hasAllKeys == true) {
     blogs.push({ id: id, title: req.body.title, content: req.body.content });
