@@ -1,14 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { validateFields } from "../utils/validation";
 
 const Login = () => {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  // Redirect to home page if user is already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, setError]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,7 +26,6 @@ const Login = () => {
     ]);
     if (Object.keys(errors).length > 0) {
       setError(errors[Object.keys(errors)[0]]);
-      console.log(errors[Object.keys(errors)[0]]);
       return;
     }
     try {
