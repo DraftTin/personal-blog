@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
-import removeMarkdown from "remove-markdown";
+import htmlTruncate from "html-truncate";
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const limit = 4;
+  const limit = 6;
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5002/api/blogs?page=${page}&limit=${limit}`
+          `http://localhost:5002/api/blogs?page=${page}&limit=${limit}${
+            searchTerm ? `&search=${searchTerm}` : ""
+          }`
         );
         setBlogs(response.data.blogs);
         setTotalPages(response.data.totalPages);
@@ -25,30 +26,19 @@ const Home = () => {
     };
 
     fetchBlogs();
-  }, [page]);
+  }, [page, searchTerm]);
 
   const handlePageChange = (direction) => {
     setPage((prevPage) => Math.max(1, prevPage + direction));
   };
 
-  const handleSearch = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:5002/api/blogs?search=${searchTerm}&limit=${limit}`
-      );
-      setBlogs(response.data.blogs);
-    } catch (error) {
-      console.error("Error fetching blogs", error);
-    }
+  const handleSearch = () => {
+    setPage(1); // Reset to the first page for search results
   };
 
-  // truncate markdown text
-  function truncateMarkdown(markdown, length) {
-    const plainText = removeMarkdown(markdown);
-    return plainText.length > length
-      ? plainText.slice(0, length) + "..."
-      : plainText;
-  }
+  const truncateHTML = (html, maxLength) => {
+    return htmlTruncate(html, maxLength, { ellipsis: "..." });
+  };
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -79,10 +69,12 @@ const Home = () => {
             <h2 className="text-xl font-bold text-blue-700 mb-2">
               <Link to={`/blogs/${blog._id}`}>{blog.title}</Link>
             </h2>
-            <p className="text-gray-700 mb-4">
-              {truncateMarkdown(blog.content, 20)}{" "}
-              {/* Truncate to 100 characters */}
-            </p>
+            <div
+              className="text-gray-700 mb-4"
+              dangerouslySetInnerHTML={{
+                __html: truncateHTML(blog.content, 200), // Limit to 200 characters
+              }}
+            ></div>
             <p className="text-sm text-gray-500">Author: {blog.author}</p>
           </li>
         ))}
