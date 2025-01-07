@@ -25,4 +25,5 @@ dist-ssr
 *.sw?
 
 # image files
-uploads/*
+uploads/avatar/*
+!uploads/avatar/default.jpg
