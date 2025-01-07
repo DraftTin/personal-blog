@@ -83,7 +83,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="flex flex-col items-center p-6 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-center text-blue-600">
         Profile
       </h1>
@@ -92,17 +92,25 @@ const Profile = () => {
         <img
           src={`http://localhost:5002${user.avatar}`} // Use the secure avatar route
           alt="Profile Avatar"
-          className="w-32 h-32 rounded-full"
+          className="w-32 h-32 rounded-full mb-4 border border-gray-300"
         />
       ) : (
-        <div className="w-32 h-32 rounded-full bg-gray-300 flex items-center justify-center">
+        <div className="w-32 h-32 rounded-full bg-gray-300 flex items-center justify-center mb-4">
           <span>No Avatar</span>
         </div>
       )}
-      <input type="file" onChange={handleAvatarChange} />
+      <div className="text-center mb-4">
+        <input
+          type="file"
+          onChange={handleAvatarChange}
+          className="block mx-auto mt-4"
+        />
+      </div>
 
       {message && <p className="text-center text-green-500 mb-4">{message}</p>}
-
+      <h2 className="text-xl font-bold mb-4 text-center text-blue-600">
+        Welcome, {user?.username}
+      </h2>
       <div className="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
         {editMode ? (
           <>
