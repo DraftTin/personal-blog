@@ -3,6 +3,12 @@ import express from "express";
 import User from "../models/User.js";
 import protect from "../middleware/authMiddleware.js";
 import multer from "multer";
+import path from "path";
+import { fileURLToPath } from "url";
+import fs from "fs";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
@@ -12,7 +18,7 @@ const storage = multer.diskStorage({
     cb(null, "uploads/avatars/"); // Save files in the "uploads/avatars" directionary
   },
   filename: (req, file, cb) => {
-    cb(null, `${req.user.id}-${Date.now()}-${file.originalname}`);
+    cb(null, `${req.user.id}.jpg`);
   },
 });
 
@@ -28,15 +34,33 @@ router.post("/avatar", protect, upload.single("avatar"), async (req, res) => {
     }
 
     // Set the avatar URL
-    user.avatar = `${req.protocol}://${req.get("host")}/uploads/avatars/${
-      req.file.filename
-    }`;
+    user.avatar = `/api/users/avatar/${req.user.id}`;
     await user.save();
 
     res.status(200).json({ avatar: user.avatar });
   } catch (error) {
     console.error("Error uploading avatar:", error);
     res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Get avatar by ID
+router.get("/avatar/:id", async (req, res) => {
+  const filePath = path.join(
+    __dirname,
+    "../uploads/avatars",
+    `${req.params.id}.jpg`
+  );
+  // check if the file exists
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    // Respond with a default avatar if the file does not exist
+    const defaultAvatar = path.join(
+      __dirname,
+      "../uploads/avatars/default.jpg"
+    );
+    res.sendFile(defaultAvatar);
   }
 });
 
@@ -50,11 +74,9 @@ router.put("/me", protect, async (req, res) => {
       { username, email },
       { new: true, runValidators: true }
     );
-
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
     res.status(200).json(user);
   } catch (error) {
     console.error("Error updating user:", error);

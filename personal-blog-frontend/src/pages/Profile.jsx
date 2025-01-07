@@ -11,13 +11,6 @@ const Profile = () => {
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [avatar, setAvatar] = useState(user?.avatar || ""); // Initialize with user avatar
-
-  useEffect(() => {
-    if (user?.avatar) {
-      setAvatar(user.avatar); // Ensure avatar is updated when user changes
-    }
-  }, [user]);
 
   // handle avatar change
   const handleAvatarChange = async (e) => {
@@ -31,12 +24,7 @@ const Profile = () => {
       const response = await axiosInstance.post("/users/avatar", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      console.log("okokokokokokoko");
-      console.log(response.data);
-      setAvatar(response.data.avatar); // Update avatar URL after upload
-      console.log("qppqpqpqpqpq");
       setMessage("Avatar updated successfully!");
-      console.log(avatar);
     } catch (error) {
       console.error("Failed to upload avatar:", error);
       setMessage("Failed to upload avatar. Please try again.");
@@ -46,7 +34,6 @@ const Profile = () => {
   // Handle profile update
   const handleUpdate = async () => {
     try {
-      console.log(accessToken);
       const response = await axios.put(
         "http://localhost:5002/api/users/me",
         { username, email },
@@ -101,25 +88,19 @@ const Profile = () => {
         Profile
       </h1>
 
-      {avatar ? (
+      {user?.avatar ? (
         <img
-          src={avatar}
+          src={`http://localhost:5002${user.avatar}`} // Use the secure avatar route
           alt="Profile Avatar"
-          className="w-32 h-32 rounded-full mx-auto mb-4 border border-gray-300"
+          className="w-32 h-32 rounded-full"
         />
       ) : (
-        <div className="w-32 h-32 rounded-full mx-auto mb-4 bg-gray-300 flex items-center justify-center">
+        <div className="w-32 h-32 rounded-full bg-gray-300 flex items-center justify-center">
           <span>No Avatar</span>
         </div>
       )}
+      <input type="file" onChange={handleAvatarChange} />
 
-      <div className="text-center mb-4">
-        <input
-          type="file"
-          onChange={handleAvatarChange}
-          className="block mx-auto mt-4"
-        />
-      </div>
       {message && <p className="text-center text-green-500 mb-4">{message}</p>}
 
       <div className="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
