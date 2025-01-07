@@ -4,7 +4,7 @@ import axios from "axios";
 import { validateFields } from "../utils/validation";
 
 const Profile = () => {
-  const { user, accessToken, logout, axiosInstance } = useAuth();
+  const { user, setUser, accessToken, logout, axiosInstance } = useAuth();
   const [editMode, setEditMode] = useState(false);
   const [username, setUsername] = useState(user?.username || "");
   const [email, setEmail] = useState(user?.email || "");
@@ -24,6 +24,10 @@ const Profile = () => {
       const response = await axiosInstance.post("/users/avatar", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+      setUser((prevUser) => ({
+        ...prevUser,
+        avatar: response.data.avatar,
+      }));
       setMessage("Avatar updated successfully!");
     } catch (error) {
       console.error("Failed to upload avatar:", error);
@@ -41,6 +45,11 @@ const Profile = () => {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
+      setUser((prevUser) => ({
+        ...prevUser,
+        email: email,
+        username: username,
+      }));
       setMessage("Profile updated successfully!");
       setEditMode(false);
     } catch (error) {
@@ -118,6 +127,7 @@ const Profile = () => {
               <label className="block text-gray-700 font-bold mb-2">
                 Username
               </label>
+              profile
               <input
                 type="text"
                 value={username}

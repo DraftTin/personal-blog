@@ -34,7 +34,7 @@ router.post("/avatar", protect, upload.single("avatar"), async (req, res) => {
     }
 
     // Set the avatar URL
-    user.avatar = `/api/users/avatar/${req.user.id}`;
+    user.avatar = `/api/users/avatar/${req.user.id}?t=${new Date().getTime()}`;
     await user.save();
 
     res.status(200).json({ avatar: user.avatar });
