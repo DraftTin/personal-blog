@@ -30,7 +30,7 @@ const Login = () => {
     }
     try {
       await login(email, password);
-      navigate("/");
+      navigate("/verify-otp", { state: { email } });
     } catch (err) {
       setError(err.response?.data?.message || "An unexpected error occurred.");
     }

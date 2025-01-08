@@ -32,9 +32,7 @@ export const AuthProvider = ({ children }) => {
 
   const loadUser = async (token = accessToken) => {
     if (!token) {
-      // console.log("Access token missing, attempting refresh...");
-      // await refreshToken();
-      console.log("no token no token");
+      console.log("no token");
       return;
     }
 
@@ -56,17 +54,11 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
+      // send the OTP
       const response = await axios.post(
         "http://localhost:5002/api/auth/login",
         { email, password }
       );
-      const { accessToken, refreshToken } = response.data;
-
-      // Save tokens
-      setAccessToken(accessToken);
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-      loadUser(accessToken);
     } catch (error) {
       console.error("Login failed:", error);
       throw error;

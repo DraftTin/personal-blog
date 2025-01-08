@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
 import Profile from "./pages/Profile";
+import VerifyOTP from "./pages/VerifyOTP";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <Router>
         <Layout>
           <Routes>
+            <Route path="/verify-otp" element={<VerifyOTP />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route

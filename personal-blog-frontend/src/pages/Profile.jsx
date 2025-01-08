@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { validateFields } from "../utils/validation";
@@ -22,7 +22,10 @@ const Profile = () => {
 
     try {
       const response = await axiosInstance.post("/users/avatar", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authentication: `Bearer ${accessToken}`,
+        },
       });
       setUser((prevUser) => ({
         ...prevUser,
@@ -64,7 +67,6 @@ const Profile = () => {
         { name: "Current Password", value: password, required: true },
         { name: "New Password", value: newPassword, required: true },
       ]);
-      console.log(Object.keys(errors).length);
       if (Object.keys(errors).length > 0) {
         setMessage(errors[Object.keys(errors)[0]]);
         return;
