@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { validateFields } from "../utils/validation";
@@ -11,7 +11,22 @@ const Profile = () => {
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [activityLog, setActivityLog] = useState([]);
 
+  useEffect(() => {
+    const fetchActivityLog = async () => {
+      try {
+        const response = await axiosInstance.get("/users/activity", {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        setActivityLog(response.data);
+      } catch (error) {
+        console.error("Error fetching activity log: ", error);
+      }
+    };
+    console.log("lksdjlaksdj");
+    fetchActivityLog();
+  }, []);
   // handle avatar change
   const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
@@ -96,7 +111,7 @@ const Profile = () => {
   return (
     <div className="flex flex-col items-center p-6 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-center text-blue-600">
-        Profile
+        Profileasldkjalksdjddddd
       </h1>
 
       {user?.avatar ? (
@@ -222,6 +237,27 @@ const Profile = () => {
         >
           Logout
         </button>
+        {/* Activity Log */}
+        <div className="bg-white p-6 rounded-lg shadow-md max-w-2xl w-full mt-8">
+          <h2 className="text-xl font-bold mb-4 text-blue-600">Activity Log</h2>
+          <ul className="divide-y divide-gray-200">
+            {activityLog.map((activity) => (
+              <li key={activity._id} className="py-4">
+                <div className="flex justify-between">
+                  <p>
+                    <strong>{activity.action}</strong> {activity.resource}{" "}
+                    {activity.resourceId?.title
+                      ? `"${activity.resourceId.title}"`
+                      : ""}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {new Date(activity.timestamp).toLocaleString()}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );

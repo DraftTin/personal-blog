@@ -2,6 +2,7 @@ import express from "express";
 import Blog from "../models/Blog.js";
 import validateBlog from "../middleware/validateBlog.js";
 import protect from "../middleware/authMiddleware.js";
+import Activity from "../models/Activity.js";
 
 const router = express.Router();
 
@@ -9,12 +10,20 @@ const router = express.Router();
 router.post("/create", protect, validateBlog, async (req, res) => {
   const { title, content } = req.body;
   try {
-    const blog = new Blog({
+    const newBlog = new Blog({
       title,
       content,
       author: req.user.id,
     });
-    const savedBlog = await blog.save();
+
+    // Log the Activity
+    await Activity.create({
+      userId: req.user.id,
+      action: "created",
+      resource: "blog",
+      resourceId: newBlog._id,
+    });
+    const savedBlog = await newBlog.save();
     res.status(201).json(savedBlog);
   } catch (error) {
     res.status(500).json({ message: "Error creating blog" });
@@ -99,12 +108,25 @@ router.put("/:id", async (req, res) => {
 });
 
 // Delete a blog by ID
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", protect, async (req, res) => {
   try {
-    const deletedBlog = await Blog.findByIdAndDelete(req.params.id);
+    const deletedBlog = await Blog.findById(req.params.id);
     if (!deletedBlog) {
       return res.status(404).json({ message: "Blog not found" });
     }
+    if (deletedBlog.author.toString() !== req.user.id) {
+      return res
+        .status(403)
+        .json({ message: "Not authorized to delete this blog" });
+    }
+    await deletedBlog.deleteOne();
+    // Log the activity
+    await Activity.create({
+      userId: req.user.id,
+      action: "deleted",
+      resource: "blog",
+      resourceId: deletedBlog._id,
+    });
     res.status(200).json({ message: "Blog deleted successfully" });
   } catch (error) {
     console.error("Error deleting blog:", error);

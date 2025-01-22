@@ -6,6 +6,7 @@ import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
+import Activity from "../models/Activity.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -102,6 +103,20 @@ router.put("/change-password", protect, async (req, res) => {
   } catch (error) {
     console.error("Error changing password:", error);
     res.status(500).json({ message: "Failed to change password" });
+  }
+});
+
+// Get user activity log
+router.get("/activity", protect, async (req, res) => {
+  try {
+    const activities = await Activity.find({ userId: req.user.id })
+      .sort({ timestamp: -1 })
+      .populate("resourceId", "title"); // Populate blog titles for better context
+
+    res.status(200).json(activities);
+  } catch (error) {
+    console.error("Error fetching activity log:", error);
+    res.status(500).json({ message: "Error fetching activity log" });
   }
 });
 
