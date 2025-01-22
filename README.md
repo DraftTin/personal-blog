@@ -109,6 +109,8 @@ PORT=5002
 NODE_ENV=production
 JWT_SECRET=<Your JWT Secret>
 JWT_REFRESH_SECRET=<Your JWT Refresh Secret>
+EMAIL_USER=<EMAIL>
+EMAIL_PASS=<PASSWORD>
 ```
 
 ### Ensure the `uploads/avatar` exists in your backend project root

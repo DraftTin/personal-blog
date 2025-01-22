@@ -27,3 +27,6 @@ dist-ssr
 # image files
 uploads/avatar/*
 !uploads/avatar/default.jpg
+
+# .env
+.env
