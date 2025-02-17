@@ -111,6 +111,7 @@ router.put("/:id", async (req, res) => {
 
 // Delete a blog by ID
 router.delete("/:id", protect, async (req, res) => {
+  console.log("asldkjasldkj");
   try {
     const deletedBlog = await Blog.findById(req.params.id);
     if (!deletedBlog) {

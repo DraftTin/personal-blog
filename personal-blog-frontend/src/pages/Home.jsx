@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import htmlTruncate from "html-truncate";
+import { useAuth } from "../context/AuthContext";
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const { accessToken, user, axiosInstance } = useAuth();
   const limit = 6;
 
   useEffect(() => {
@@ -19,14 +21,30 @@ const Home = () => {
           }`
         );
         setBlogs(response.data.blogs);
-        setTotalPages(response.data.totalPages);
+        setTotalPages(
+          response.data.totalPages > 0 ? response.data.totalPages : 1
+        );
       } catch (error) {
         console.error("Error fetching blogs:", error);
       }
     };
-
     fetchBlogs();
   }, [page, searchTerm]);
+
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this blog?"
+    );
+    if (!confirmDelete) return;
+    try {
+      await axiosInstance.delete(`/blogs/${id}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      setBlogs(blogs.filter((blog) => blog._id !== id));
+    } catch (error) {
+      console.error("Error deleting blog:", error);
+    }
+  };
 
   const handlePageChange = (direction) => {
     setPage((prevPage) => Math.max(1, prevPage + direction));
@@ -87,6 +105,14 @@ const Home = () => {
               <p className="text-sm text-gray-500">
                 Author: {blog.author.username}
               </p>
+              {user._id == blog.author._id && (
+                <button
+                  onClick={() => handleDelete(blog._id)}
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                >
+                  Delete
+                </button>
+              )}
             </div>
           </li>
         ))}
