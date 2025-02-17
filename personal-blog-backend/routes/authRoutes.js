@@ -56,7 +56,7 @@ router.post("/login", async (req, res) => {
     if (!user || !(await user.comparePassword(password))) {
       return res.status(400).json({ message: "Invalid credentials." });
     }
-    res.status(200).json({ message: "OTP sent to email" });
+    res.status(200).json({ message: "OTP page" });
   } catch (error) {
     res.status(500).json({ message: "Server error." });
   }
@@ -74,7 +74,7 @@ router.post("/resend-otp", async (req, res) => {
 
     // Gemerate OTP
     const otp = crypto.randomInt(100000, 999999).toString();
-    const otpExpires = Date.now() + 5 * 60 * 1000; // 5 minutes expiration
+    const otpExpires = Date.now() + 5 * 60 * 1000 * 10; // 5 minutes expiration
     // update user with OTP and expiration
     user.otp = otp;
     user.otpExpires = otpExpires;
@@ -91,7 +91,7 @@ router.post("/resend-otp", async (req, res) => {
       from: process.env.EMAIL_USER,
       to: user.email,
       subject: "Your OTP for login",
-      text: `Your OTP is ${otp}. It will expire in 5 minutes`,
+      text: `Your OTP is ${otp}. It will expire in 50 minutes`,
     });
     res.status(200).json({ message: "OTP sent" });
   } catch (error) {

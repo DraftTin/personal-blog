@@ -84,7 +84,9 @@ const Home = () => {
                   __html: truncateHTML(blog.content, 200),
                 }}
               ></div>
-              <p className="text-sm text-gray-500">Author: {blog.author}</p>
+              <p className="text-sm text-gray-500">
+                Author: {blog.author.username}
+              </p>
             </div>
           </li>
         ))}

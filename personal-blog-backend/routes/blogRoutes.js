@@ -56,9 +56,11 @@ router.get("/", async (req, res) => {
       ...(category && { category }),
     };
     const blogs = await Blog.find(query)
+      .populate("author", "username")
       .sort({ [sortBy]: sortOrder === "asc" ? 1 : -1 })
       .skip(skip)
       .limit(limit);
+
     const totalBlogs = await Blog.countDocuments(query);
 
     res.status(200).json({

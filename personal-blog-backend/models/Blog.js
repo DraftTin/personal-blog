@@ -4,7 +4,11 @@ const BlogSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     content: { type: String, required: true },
-    author: { type: String, default: "Anonymous" },
+    author: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     category: { type: String, default: "Others" },
   },
   // createdAt & updatedAt fields
